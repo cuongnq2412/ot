@@ -1,0 +1,2101 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Portal</title>
+  <style>
+    :root {
+      --primary: #02509e;
+      --primary-dark: #01376d;
+      --primary-light: #e6f0fa;
+      --secondary: #e67e22;
+      --success: #27ae60;
+      --danger: #e74c3c;
+      --bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --text: #2c3e50;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --highlight: #fff3cd;
+      --highlight-text: #856404;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding-bottom: 70px;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 12px 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.62);
+    }
+
+    .header-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .badge-exam {
+      background: rgba(255,255,255,0.2);
+      font-size: 0.72rem;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    /* Mode Selector Bar */
+    .mode-bar {
+      display: flex;
+      background: #ffffff;
+      border-bottom: 2px solid var(--border);
+      position: sticky;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 999;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 12px 2px;
+      border: none;
+      background: none;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-align: center;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: #f0f6ff;
+    }
+
+    /* Quick Filter Chips */
+    .filter-wrapper {
+      padding: 8px 10px;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+      display: flex;
+      gap: 6px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .filter-chip {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .filter-chip.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    /* Content Area */
+    .container {
+      padding: 10px 12px;
+    }
+
+    /* Card Item */
+    .topic-card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      margin-bottom: 14px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+      overflow: hidden;
+    }
+
+    .topic-header {
+      padding: 12px 14px;
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .topic-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      font-weight: bold;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    .topic-title-wrap {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .topic-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .toggle-icon {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+
+    .topic-card.collapsed .toggle-icon {
+      transform: rotate(-90deg);
+    }
+
+    .topic-card.collapsed .topic-body {
+      display: none;
+    }
+
+    .topic-body {
+      padding: 14px;
+    }
+
+    /* Sub-section */
+    .sub-section {
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .sub-section:last-child {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .sub-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sub-title::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 14px;
+      background: var(--secondary);
+      border-radius: 2px;
+    }
+
+    /* Script Dialogue box */
+    .dialogue-box {
+      background: #fdfaf6;
+      border-left: 3px solid var(--secondary);
+      padding: 10px 12px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.88rem;
+      color: #2c3e50;
+      margin: 8px 0;
+      font-style: italic;
+    }
+
+    .dialogue-action {
+      color: #d35400;
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    /* Bullet and Number List */
+    ul.item-list, ol.item-list {
+      padding-left: 20px;
+      font-size: 0.88rem;
+    }
+
+    ul.item-list li, ol.item-list li {
+      margin-bottom: 6px;
+      line-height: 1.45;
+    }
+
+    /* Number tag */
+    .num-tag {
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-family: monospace;
+      font-size: 0.85rem;
+    }
+
+    /* Important Key Word in Text */
+    .keyword {
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    /* Blank / Mask Mode */
+    .blank {
+      background-color: #f1f5f9;
+      color: #f1f5f9;
+      border-bottom: 2px solid #cbd5e1;
+      padding: 0 4px;
+      border-radius: 3px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+      display: inline;
+    }
+
+    .blank.revealed {
+      background-color: #fff9db;
+      color: #b45309;
+      border-bottom-color: #f59e0b;
+      font-weight: 700;
+    }
+
+    body.mode-study .blank {
+      background: transparent;
+      color: inherit;
+      border-bottom: none;
+    }
+
+    /* Quick Practice Tab */
+    .practice-section {
+      display: none;
+    }
+
+    .practice-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      margin-bottom: 16px;
+    }
+
+    .practice-question {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 12px;
+    }
+
+    textarea.practice-input {
+      width: 100%;
+      height: 110px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      resize: vertical;
+      margin-bottom: 10px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: none;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-outline {
+      background: white;
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    .practice-answer {
+      margin-top: 12px;
+      padding: 12px;
+      background: #f8fafc;
+      border-radius: 8px;
+      border-left: 3px solid var(--success);
+      font-size: 0.85rem;
+      display: none;
+    }
+
+    /* Bottom Quick Action Bar */
+    .bottom-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-top: 1px solid var(--border);
+      padding: 10px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+    }
+
+    .btn-action-round {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+
+    .counter-info {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    /* Stat Box (Mini cheat-sheet) */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .stat-card {
+      background: #f8fbff;
+      border: 1px solid #d0e2ff;
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      color: #555;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .stat-val {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-top: 2px;
+    }
+
+    /* MCQ Interactive Quiz */
+    .mcq-section {
+      display: none;
+    }
+
+    .mcq-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+
+    .mcq-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+    }
+
+    .mcq-qnum {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .mcq-question-text {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.45;
+      margin-bottom: 12px;
+    }
+
+    .mcq-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mcq-option {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      transition: all 0.2s;
+      line-height: 1.4;
+    }
+
+    .mcq-option:active {
+      transform: scale(0.99);
+    }
+
+    .mcq-opt-char {
+      font-weight: 700;
+      color: var(--primary);
+      width: 18px;
+      flex-shrink: 0;
+    }
+
+    .mcq-option.correct {
+      background: #e6f7ec !important;
+      border-color: #27ae60 !important;
+      color: #1b5e20 !important;
+      font-weight: 600;
+    }
+
+    .mcq-option.wrong {
+      background: #fdf2f2 !important;
+      border-color: #e74c3c !important;
+      color: #c0392b !important;
+    }
+
+    .mcq-feedback {
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: none;
+    }
+
+    .mcq-score-banner {
+      background: linear-gradient(135deg, #02509e, #2980b9);
+      color: white;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    /* Lock Screen Overlay */
+    #lockScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #f8fafc;
+      z-index: 999999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .lock-box {
+      background: white;
+      padding: 28px 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      width: 100%;
+      max-width: 320px;
+      text-align: center;
+      border: 1px solid #e2e8f0;
+    }
+
+    .lock-input {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 1rem;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      outline: none;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+
+    .lock-input:focus {
+      border-color: #02509e;
+    }
+
+    .lock-btn {
+      width: 100%;
+      padding: 12px;
+      background: #02509e;
+      color: white;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .lock-error {
+      color: #e74c3c;
+      font-size: 0.8rem;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body class="mode-study">
+
+  <!-- LOCK SCREEN -->
+  <div id="lockScreen">
+    <div class="lock-box">
+      <div style="font-size:2rem; margin-bottom:12px;">🔒</div>
+      <input type="password" id="passInput" class="lock-input" placeholder="Mã truy cập" autofocus>
+      <button class="lock-btn" onclick="checkUnlock()">MỞ KHÓA</button>
+      <div class="lock-error" id="lockErr">Mã truy cập không đúng!</div>
+    </div>
+  </div>
+
+  <!-- MODE SELECTOR -->
+  <div class="mode-bar">
+    <button class="mode-btn active" id="btnModeStudy" onclick="switchMode('study')">📖 Toàn Văn</button>
+    <button class="mode-btn" id="btnModeMask" onclick="switchMode('mask')">🎯 Che Từ</button>
+    <button class="mode-btn" id="btnModeQuiz" onclick="switchMode('practice')">✍️ Tự Luận</button>
+    <button class="mode-btn" id="btnModeMCQ" onclick="switchMode('mcq')">📝 Trắc Nghiệm</button>
+  </div>
+
+  <!-- QUICK TOPIC FILTER -->
+  <div class="filter-wrapper" id="filterBar">
+    <div class="filter-chip active" onclick="filterTopic('all')">Tất cả</div>
+    <div class="filter-chip" onclick="filterTopic('t1')">1. Kios</div>
+    <div class="filter-chip" onclick="filterTopic('t2')">2. Giường</div>
+    <div class="filter-chip" onclick="filterTopic('t3')">3. BHYT</div>
+    <div class="filter-chip" onclick="filterTopic('t4')">4. GTTT</div>
+    <div class="filter-chip" onclick="filterTopic('t5')">5. CNTT</div>
+    <div class="filter-chip" onclick="filterTopic('t6')">6. Bánh sữa</div>
+    <div class="filter-chip" onclick="filterTopic('t7')">7. Đo mắt</div>
+    <div class="filter-chip" onclick="filterTopic('t8')">8. Đổi TT</div>
+    <div class="filter-chip" onclick="filterTopic('t9')">9. BV01</div>
+    <div class="filter-chip" onclick="filterTopic('t10')">10. Ngoài giờ</div>
+  </div>
+
+  <!-- MAIN STUDY CONTENT (MODE 1 & 2) -->
+  <div class="container" id="studyContent">
+
+    <!-- MỤC 1 -->
+    <div class="topic-card" id="card-t1">
+      <div class="topic-header" onclick="toggleCard(this)">
+        <div class="topic-title-wrap">
+          <span class="topic-num">1</span>
+          <span class="topic-title">Quy trình vận hành Kios y tế thông minh</span>
+        </div>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="topic-body">
+        
+        <div class="sub-section">
+          <div class="sub-title">ĐỊNH DANH KHÁCH HÀNG</div>
+          <ul class="item-list">
+            <li>KH phải bắt buộc xuất trình được <span class="blank">GTTT hợp lệ</span>:
+              <ul style="padding-left:16px; margin-top:4px;">
+                <li>+ GTTT: <span class="blank">CCCD, Hộ chiếu, VNEID, Thẻ BHYT, GP lái xe, Giấy khai sinh, Giấy chứng sinh</span></li>
+                <li>+ GTTT y tế: <span class="blank">Hồ sơ sức khỏe bản cứng, Hồ sơ sức khỏe điện tử (EMR)</span></li>
+              </ul>
+            </li>
+            <li>Định danh 3 yếu tố theo <span class="blank">Quy trình xác định đúng NB</span></li>
+          </ul>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">THAY ĐỔI THÔNG TIN</div>
+          <ul class="item-list">
+            <li>KH có lịch sử khám tại BV/PK Tâm Anh muốn bổ sung hoặc thay đổi thông tin <span class="blank">thực hiện tại quầy LTTN, không thực hiện trên kios</span></li>
+            <li>KIOS checkin/xác minh <span class="blank">dữ liệu có sẵn</span>, không đăng ký bằng cách <span class="blank">nhập tay thông tin hoặc sửa thông tin</span></li>
+          </ul>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">ĐĂNG KÝ (3 NHÓM ĐỐI TƯỢNG)</div>
+          <p style="font-weight:700; margin-bottom:4px; font-size:0.85rem;">1. KH CHƯA ĐẶT HẸN:</p>
+          <ul class="item-list" style="margin-bottom:8px;">
+            <li>KIOS cho đăng kí khi KH cung cấp được <span class="blank">GTTT hoặc mã PID</span></li>
+            <li>KIOS tự động lấy số tại PK đang có <span class="blank">số lượt chờ ít nhất</span></li>
+          </ul>
+
+          <p style="font-weight:700; margin-bottom:4px; font-size:0.85rem;">2. KH CÓ CLSTL:</p>
+          <ul class="item-list" style="margin-bottom:8px;">
+            <li>KIOS tiếp nhận CLSTL <span class="blank">sớm hơn 5 ngày</span> và <span class="blank">không trễ hơn 30 ngày</span> so với ngày hẹn thực hiện CLSTL</li>
+            <li>KIOS không thay đổi <span class="blank">ĐỐI TƯỢNG hoặc SỐ LƯỢNG CLS</span></li>
+            <li>KH có CLSTL nhưng chưa hẹn:
+              <ul style="padding-left:16px;">
+                <li>+ KIOS lấy số vào <span class="blank">PK BS cho CLSTL</span></li>
+                <li>+ KIOS lấy số tại <span class="blank">PK đang có lượt chờ ít nhất nếu ko có BS cho CLSTL tại PK</span></li>
+              </ul>
+            </li>
+          </ul>
+
+          <p style="font-weight:700; margin-bottom:4px; font-size:0.85rem;">3. KH ĐẶT HẸN:</p>
+          <ul class="item-list">
+            <li>KH cung cấp thông tin đặt hẹn từ <span class="blank">TĐ</span></li>
+            <li>KIOS tự động lấy số theo <span class="blank">giờ hẹn từ TĐ</span></li>
+          </ul>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title" style="color:var(--danger)">CÁC TRƯỜNG HỢP KO CHECKIN KIOS, CSKH ĐĂNG KÝ TẠI QUẦY LTTN (9 TRƯỜNG HỢP)</div>
+          <ol class="item-list" style="color:#222;">
+            <li>1. KH <span class="blank">không cung cấp được GTTT</span></li>
+            <li>2. KH không mang theo, cung cấp <span class="blank">GTTT không hợp lệ</span></li>
+            <li>3. KH có lịch sử khám BHYT tại CSYT khác hoặc BV/PK Tâm Anh <span class="blank">trong vòng từ 05 trở xuống</span></li>
+            <li>4. KH khám BHYT <span class="blank">chưa kết thúc khám Chuyên khoa</span> so với ngày đăng ký khám</li>
+            <li>5. KH khám <span class="blank">khu VIP, IVF</span></li>
+            <li>6. <span class="blank">Chọn đích danh BS không đặt hẹn</span></li>
+            <li>7. KH Thu phí sử dụng <span class="blank">tiền mặt</span> (KH khi đăng kí đối tượng Thu phí thanh toán tiền mặt)</li>
+            <li>8. KH muốn <span class="blank">chuyển đổi chuyên khoa/PK</span></li>
+            <li>9. KH có <span class="blank">hơn 1 PID</span> tại BV/PK Tâm Anh</li>
+          </ol>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">CHUẨN BỊ HỒ SƠ KHÁM BỆNH TẠI ĐGBĐ</div>
+          <ul class="item-list">
+            <li>CSKH và ĐD/HS bàn giao theo ngày, tối đa <span class="blank">20 bìa/lần</span></li>
+            <li>Nếu tại ĐGBĐ <span class="blank">&lt;5 bìa</span>, ĐD/HS liên hệ CSKH lấy thêm, đảm bảo tối đa <span class="blank">20 bìa lưu trữ</span></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MỤC 2 -->
+    <div class="topic-card" id="card-t2">
+      <div class="topic-header" onclick="toggleCard(this)">
+        <div class="topic-title-wrap">
+          <span class="topic-num">2</span>
+          <span class="topic-title">Quy định chăm sóc người bệnh khác khoa</span>
+        </div>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="topic-body">
+        
+        <div class="sub-section">
+          <div class="sub-title">KHI KH/NB CÓ CHỈ ĐỊNH NHẬP VIỆN THEO TIÊU CHUẨN CỦA BS CHUYÊN KHOA, NHƯNG GIƯỜNG CHÍNH KHÔNG CÒN TRỐNG</div>
+          <p style="font-size:0.85rem; font-weight:600; margin-bottom:4px;">CSKH liên hệ khác khoa để đặt giường bệnh theo thứ tự ưu tiên:</p>
+          
+          <p style="font-weight:700; color:var(--primary); margin:6px 0 2px;">1. ƯU TIÊN 1 (CÁC KHỐI CHUYÊN KHOA):</p>
+          <ul class="item-list">
+            <li>- <b>Khối Nội:</b> <span class="blank">Nội tổng hợp, Ung bướu, Nội thần kinh, Nội tiết, Nội thận, Nội tiêu hóa, Trung tâm tim mạch, Trung tâm tim mạch can thiệp</span></li>
+            <li>- <b>Khối Ngoại:</b> <span class="blank">Phẫu thuật thần kinh, TT CTCH, TT Nội soi- Phẫu thuật tiêu hóa, TT Thận học - Tiết niệu- Nam khoa, TT Lồng ngực mạch máu</span></li>
+            <li>- <b>Khối Sản - Ngoại vú:</b> <span class="blank">Sản nội trú, Ngoại vú, Phòng sanh</span></li>
+            <li>- <b>Khối Nhi - Sơ sinh - Tai mũi họng:</b> <span class="blank">Khoa Nhi, TT Sơ sinh, TMH</span></li>
+            <li>- <b>Khối Hồi sức cấp cứu:</b> <span class="blank">Hồi sức tích cực, Cấp cứu</span></li>
+          </ul>
+
+          <p style="font-weight:700; color:var(--primary); margin:8px 0 2px;">2. ƯU TIÊN 2 (VỊ TRÍ):</p>
+          <ul class="item-list">
+            <li>- <span class="blank">Cùng tầng cùng tòa</span></li>
+            <li>- <span class="blank">Cùng tòa nhà</span></li>
+          </ul>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">LƯU Ý QUAN TRỌNG</div>
+          <ul class="item-list">
+            <li>Tòa E ưu tiên nhận bệnh <span class="blank">Tiết niệu Thận học - Nam khoa</span>, nhận bệnh khi <span class="blank">tòa C và tòa F hết giường</span></li>
+            <li>CSKH tuân thủ tiêu chuẩn tác phong giao tiếp trong quá trình thông tin đặt/mượn giường đến Khoa lâm sàng Nội trú theo <span class="blank">Kịch bản gọi đi</span></li>
+            <li>CSKH báo cáo các cấp quản lý để ghi nhận đầy đủ các thông tin khó khăn trong việc Đặt/Mượn cho KH nhập viện</li>
+            <li>CSKH tuân thủ việc gửi cú pháp trên <span class="blank">Group Zalo</span></li>
+            <li>Đối với nhóm Khách hàng <span class="blank">truyền loãng xương</span> trong trường hợp muốn áp dụng BHYT (Cần lưu viện ít nhất <span class="blank">1 ngày</span>): làm Hồ sơ nhập viện và Book giường tại khu vực <span class="blank">Khu F: Tầng 4 ( HDU ): 1.350.000 vnđ/Ngày</span></li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MỤC 3 -->
+    <div class="topic-card" id="card-t3">
+      <div class="topic-header" onclick="toggleCard(this)">
+        <div class="topic-title-wrap">
+          <span class="topic-num">3</span>
+          <span class="topic-title">Triển khai Q&A tư vấn KH xác nhận quyền lợi BHYT dịch vụ, thuốc</span>
+        </div>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="topic-body">
+        
+        <div class="sub-section">
+          <div class="sub-title">Nếu chỉ định CLS không được áp dụng BHYT, toàn bộ CLS là đối tượng Trả sau:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách, BS có chỉ định quý khách thực hiện ... CLS, trong đó các chỉ định đang không áp dụng trong lần thăm khám hôm nay ....</span><span class="dialogue-action">(đưa tay chỉ các chỉ định là đối tượng Trả sau)</span><span class="blank">. Em xin phép tạm ứng chi phí tương đương với các chi phí thực tế quý khách cần thanh toán</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">Nếu chỉ định CLS được áp dụng BHYT (1/ một số/ toàn bộ chỉ định):</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách, BS có chỉ định quý khách thực hiện ... CLS, trong đó các chỉ định được BHYT chi trả là ...</span><span class="dialogue-action">(đưa tay chỉ các chỉ định là đối tượng BHYT)</span><span class="blank">, một số mục BHYT không áp dụng trong lần thăm khám hôm nay là ....</span><span class="dialogue-action">(đưa tay chỉ các chỉ định là đối tượng Trả sau)</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">Nếu KH đồng ý/ hoặc không có thắc mắc, CSKH thông báo chi phí:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Các chi phí cần thanh toán/ tạm ứng là ... Vnđ, quý khách thanh toán/tạm ứng bằng hình thức nào ạ?</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">Nếu KH còn thắc mắc về quyền lợi BHYT áp dụng cho CLS, tư vấn gặp lại BS:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Nếu quý khách vẫn còn thắc mắc về quyền lợi BHYT chi trả, em/con xin phép hướng dẫn quý khách quay lại gặp lại BS phòng khám để trao đổi thêm ạ.</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">Tại quầy LTTN/TNĐ trước khi thanh toán:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách, chỉ định có được BHYT chi trả/áp dụng hay không tùy thuộc vào bệnh và chẩn đoán hôm nay, nếu quý khách vẫn còn thắc mắc về chuyên môn, em/con xin phép liên hệ Phòng khám để BS tư vấn lại ạ</span>"
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MỤC 4 -->
+    <div class="topic-card" id="card-t4">
+      <div class="topic-header" onclick="toggleCard(this)">
+        <div class="topic-title-wrap">
+          <span class="topic-num">4</span>
+          <span class="topic-title">Q&A giải thích cung cấp giấy tờ tùy thân khi đăng ký</span>
+        </div>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="topic-body">
+        
+        <div class="sub-section">
+          <div class="sub-title">Khi KH so sánh quy định giữa các cơ sở y tế khác nhau:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách, mỗi cơ sở y tế sẽ có quy định riêng. Tại Hệ thống Bệnh viện Đa khoa Tâm Anh, việc cung cấp giấy tờ tùy thân bản cứng hoặc hình ảnh khi đăng ký nhằm giúp nhận diện chính xác thông tin người bệnh, đảm bảo an toàn trong quá trình khám và điều trị. Rất mong quý khách thông cảm và hỗ trợ để con/em phục vụ mình tốt nhất ạ</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">Khi KH không đồng ý cung cấp hình ảnh CCCD hoặc giấy tờ có hình ảnh:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách, để tránh nhầm lẫn hồ sơ và đảm bảo quyền lợi trong quá trình thăm khám, con/em xin phép được kiểm tra giấy tờ tùy thân bản cứng hoặc hình ảnh của quý khách. Rất mong quý khách thông cảm và hỗ trợ để con/em phục vụ mình tốt nhất ạ.</span>"
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MỤC 5 -->
+    <div class="topic-card" id="card-t5">
+      <div class="topic-header" onclick="toggleCard(this)">
+        <div class="topic-title-wrap">
+          <span class="topic-num">5</span>
+          <span class="topic-title">Q&A tư vấn khi sự cố hệ thống CNTT ngừng hoạt động</span>
+        </div>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="topic-body">
+        
+        <div class="sub-section">
+          <div class="sub-title">1. Thông báo, xin lỗi KH về sự cố khiến kéo dài thời gian chờ đợi:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ, kính thưa quý khách, hiện tại hệ thống công nghệ thông tin đang bị gián đoạn, vì vậy rất mong quý khách thông cảm chờ một chút, chúng em sẽ cố gắng hết sức để phục vụ quý khách nhanh chóng, xin cảm ơn quý khách.</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">2. Trường hợp KH khó chịu không chịu chờ:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ kính thưa quý khách, em đã tiếp nhận thông tin của quý khách và rất hiểu vấn đề quý khách đang chia sẻ. Hiện chúng em đang rất nỗ lực để giải quyết vấn đề, rất mong quý khách thông cảm và chờ giúp ạ, xin cảm ơn quý khách.</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">3. Giải thích lý do không sử dụng BHYT:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách vì hiện tại hệ thống phần mềm đang được nâng cấp do đó dịch vụ khám BHYT tạm thời không thể áp dụng được, rất mong quý khách thông cảm cho lần thăm khám này, sau khi hệ thống phục hồi quý khách có thể đăng ký khám BHYT ạ</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">4. Tư vấn chênh lệch phí giữa khám BHYT và khám dịch vụ:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách, chênh lệch chi phí giữa khám BHYT và dịch vụ tại bệnh viện như sau: chi phí khám buổi sáng thông thường tại bệnh viện là 190.000đ/lượt khám, nếu sử dụng BHYT thì quý khách sẽ được BHYT chi trả 50.600đ, vậy phí khám sau khi cấn trừ là 139.400đ ạ</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">5. Đang khám BHYT sau đó xảy ra sự cố và không sử dụng thuốc BHYT:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách, vì hiện tại hệ thống phần mềm đang được nâng cấp do đó dịch vụ cấp phát thuốc BHYT tạm thời không sử dụng được, rất mong quý khách thông cảm cho lần thăm khám này. Hiện tại, quý khách có thể tạm mua thuốc dịch vụ sử dụng theo toa thuốc BS đã kê, sau khi hệ thống phục hồi, bệnh viện sẽ thực hiện cấp phát thuốc BHYT đầy đủ theo y lệnh. Xin cảm ơn quý khách</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">6a. KH đã đăng ký BHYT xảy ra sự cố: KH ĐỒNG Ý khám đối tượng Thu Phí:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ hiện tại quý khách có thể chuyển đổi sang đối tượng Thu phí để kiểm tra sức khỏe kịp thời ạ. Em xin phép mượn lại hồ sơ để thực hiện chuyển đổi, chúng em đã sắp xếp quầy ưu tiên để xử lý. Mong quý khách thông cảm chờ một chút giúp em, em cảm ơn quý khách ạ!</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">6b. KH đã đăng ký BHYT xảy ra sự cố: KH KHÔNG ĐỒNG Ý khám Thu Phí:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ trường hợp quý khách chỉ mong muốn sử dụng BHYT, em xin phép hỗ trợ quý khách điền phiếu thông tin đặt hẹn, bộ phận Tổng đài sẽ gọi ra xác nhận lịch hẹn cho quý khách thăm khám vào ngày khác nhé ạ</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">7. KH đồng ý đặt hẹn khám ngày khác:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ em đã hỗ trợ quý khách điền thông tin xong, Tổng Đài viên sẽ liên hệ để xác nhận lịch hẹn, quý khách vui lòng chú ý điện thoại giúp em nhé. Em xin cảm ơn quý khách a!</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">8. Hướng dẫn NB vào PK CSKH line tư vấn KH chờ theo lượt và nộp hồ sơ vào PK:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ em xin phép nộp hồ sơ vào phòng khám .... STT của quý khách là ... Quý khách vui lòng giữ phiếu STT này và chờ PK mời theo lượt giúp em nhé, em cảm ơn quý khách ạ</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">9. Hướng dẫn NB nộp hồ sơ vào phòng lấy mẫu:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ quý khách có chỉ định xét nghiệm, quý khách vui lòng nộp hồ sơ vào phòng lấy mẫu (phòng số ...) và ngồi chờ ĐD/TKYK/HS gọi tên giúp em ạ, em cảm ơn quý khách.</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">10. KH đã khám và có toa thuốc thì sập mạng: tư vấn thuốc không áp dụng BHYT:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ kính thưa quý khách, hiện tại hệ thống công nghệ thông tin đang gián đoạn, nên dịch vụ cấp phát thuốc BHYT tạm thời chưa áp dụng được. Em rất mong quý khách thông cảm cho lần thăm khám này ạ. Bệnh viện có thể hỗ trợ gửi thuốc BHYT về nhà cho quý khách sau khi hệ thống khôi phục, em xin phép thu tạm ứng tiền thuốc cho quý khách trước nhé ạ?</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">11. Thuốc cần dùng trong ngày và/hoặc ở tỉnh/ngoại ô TP.HCM (phối hợp Dược sĩ):</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ hiện tại quý khách có thể mua thuốc dịch vụ để sử dụng ngắn ngày thay thế trong lúc chờ gửi thuốc về nhà ạ. Sau khi hệ thống khôi phục, Bệnh viện sẽ liên hệ để báo chi phí chính xác và thực hiện gửi thuốc BHYT về địa chỉ theo yêu cầu của quý khách ạ.</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">12. KH đồng ý ship thuốc về nhà, CSKH thu tạm ứng & hướng dẫn điền thông tin:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách em đã thu tạm ứng xong, quý khách vui lòng chờ gặp Dược sĩ hướng dẫn sử dụng thuốc và thời gian chuyển thuốc trước khi ra về ạ, em xin cảm ơn quý khách.</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">13. KH ở nội ô TP.HCM muốn đến nhận thuốc trực tiếp:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách em đã thu tạm ứng xong. Sau khi hệ thống khôi phục, Bệnh viện sẽ liên hệ báo chi phí chính xác và thời gian hoạt động để quý khách tiện ghé nhận thuốc ạ, em xin cảm ơn quý khách.</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">14. KH muốn hoàn toa thuốc mua trên Hsoft (trước sập mạng) hoặc mua khác ngày:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách, hiện tại hệ thống công nghệ thông tin đang gián đoạn, nên Bệnh viện chưa thể kiểm tra và thực hiện hoàn trả các toa thuốc đã mua trước đó. Chúng em xin phép ghi nhận lại thông tin để chủ động liên hệ quý khách quay lại Bệnh viện sau khi hệ thống được khôi phục. Em rất mong quý khách thông cảm, em xin cảm ơn quý khách ạ.</span>"
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MỤC 6 -->
+    <div class="topic-card" id="card-t6">
+      <div class="topic-header" onclick="toggleCard(this)">
+        <div class="topic-title-wrap">
+          <span class="topic-num">6</span>
+          <span class="topic-title">Q&A hướng dẫn khách hàng về việc phát bánh sữa</span>
+        </div>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="topic-body">
+        <div class="sub-section">
+          <div class="sub-title">Kịch bản chuẩn:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Bệnh viện gửi tặng quý khách một phần ăn nhẹ, cô/chú/anh/chị có thể sử dụng sau khi đã thực hiện xong các chỉ định của BS, xin cảm ơn cô/chú/anh/chị.</span>"
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MỤC 7 -->
+    <div class="topic-card" id="card-t7">
+      <div class="topic-header" onclick="toggleCard(this)">
+        <div class="topic-title-wrap">
+          <span class="topic-num">7</span>
+          <span class="topic-title">Q&A tư vấn cần đo mắt trước khi vào phòng khám mắt</span>
+        </div>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="topic-body">
+        <div class="sub-section">
+          <div class="sub-title">Tình huống KH bị đau mắt do bụi thắc mắc tại sao phải đo mắt:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách, việc đo các thông số mắt ban đầu (như nhãn áp và khúc xạ) là bước sàng lọc cần thiết để giúp Bác sĩ đánh giá mức tổn thương mắt do bụi/chấn thương khác....gây ra,</span><br><br>
+            <span class="blank">Đây là bước kiểm tra nhanh, hoàn toàn không đau, giúp Bác sĩ có đầy đủ dữ liệu thị lực ban đầu để việc thăm khám trực tiếp được chính xác và hiệu quả nhất. Vì vậy em xin phép hướng dẫn quý khách đến phòng đo nhãn áp khúc xạ trước khi vào gặp Bác sĩ ạ.</span>"
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MỤC 8 -->
+    <div class="topic-card" id="card-t8">
+      <div class="topic-header" onclick="toggleCard(this)">
+        <div class="topic-title-wrap">
+          <span class="topic-num">8</span>
+          <span class="topic-title">Q&A cung cấp lại CCCD khi KH cần thay đổi thông tin sai</span>
+        </div>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="topic-body">
+        
+        <div class="sub-section">
+          <div class="sub-title">Bước 1: CSKH mượn CCCD để kiểm tra thông tin</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách con/em xin phép mượn CCCD hoặc giấy tờ tùy thân để kiểm tra thông tin ạ</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">Bước 2: Sau khi đối chiếu thông tin trên Hsoft, hướng dẫn KH kiểm tra Giấy yêu cầu thay đổi thông tin</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách, con/em xin mời quý khách kiểm tra thông tin trên phiếu yêu cầu thay đổi thông tin dành cho khách hàng để cập nhật lại [...]</span> (CSKH liệt kê các thông tin mà KH cần thay đổi như số điện thoại, địa chỉ, ngày tháng năm sinh,...)<span class="blank">, sau khi kiểm tra xong các mục quý khách vui lòng ký tên và ghi họ tên vào mục “Người yêu cầu” ạ</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">Bước 3: CSKH xác nhận lại thông tin và xin phép KH photo CCCD/ giấy tờ tùy thân</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ con/em xin phép thay đổi [...]</span> (CSKH liệt kê các thông tin mà KH cần thay đổi như số điện thoại, địa chỉ, ngày tháng năm sinh,...) <span class="blank">theo thông tin quý khách đã điền trên phiếu, em xin phép photo lại CCCD/giấy tờ tùy thân để hoàn tất thủ tục</span>"
+          </div>
+        </div>
+
+        <div class="sub-section">
+          <div class="sub-title">Bước 4: Sau khi photo CCCD/ giấy tờ tùy thân xong</div>
+          <div class="dialogue-box">
+            "<span class="blank">Con/em xin phép gửi lại CCCD/giấy tờ tùy thân ạ, xin cảm ơn quý khách.</span>"
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- MỤC 9 -->
+    <div class="topic-card" id="card-t9">
+      <div class="topic-header" onclick="toggleCard(this)">
+        <div class="topic-title-wrap">
+          <span class="topic-num">9</span>
+          <span class="topic-title">Q&A tư vấn khách hàng khi có yêu cầu in bảng kê BV01</span>
+        </div>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="topic-body">
+        <div class="sub-section">
+          <div class="sub-title">Kịch bản thoại chuẩn & Hướng dẫn:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách, mẫu Bảng kê chi phí khám bệnh BHYT (BV01) là chứng từ bệnh viện sử dụng quyết toán với cơ quan BHYT theo quy định bệnh viện sẽ cung cấp phiếu thanh toán, và hóa đơn. Trong đó, đều thể hiện đầy đủ các khoản chi phí được BHYT chi trả và phần chi phí người bệnh cần thanh toán. Em xin phép hướng dẫn Qúy khách tra cứu thông tin phiếu thanh toán tại hồ sơ SỨC KHỎE ạ</span>"<br><br>
+            <span class="dialogue-action">(CSKH hướng dẫn KH quét QR truy cập hồ sơ SỨC KHỎE và xem hướng dẫn đi kèm tại bìa hồ sơ khám bệnh)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MỤC 10 -->
+    <div class="topic-card" id="card-t10">
+      <div class="topic-header" onclick="toggleCard(this)">
+        <div class="topic-title-wrap">
+          <span class="topic-num">10</span>
+          <span class="topic-title">Q&A KH vãng lai mua thuốc khi Nhà thuốc hết giờ hoạt động</span>
+        </div>
+        <span class="toggle-icon">▼</span>
+      </div>
+      <div class="topic-body">
+        <div class="sub-section">
+          <div class="sub-title">KH vãng lai ngoài giờ mua thuốc tại nhà thuốc ngoại trú khi đã hết giờ làm việc:</div>
+          <div class="dialogue-box">
+            "<span class="blank">Dạ thưa quý khách, hiện tại nhà thuốc đã hết giờ làm việc, em xin phép hướng dẫn quý khách quay lại vào sáng ngày mai từ ... đến... (Thứ 2-Thứ 7 từ 06:00-19:00, Chủ nhật từ 06:00-12:00) để có dược sĩ tư vấn và hỗ trợ. Trường hợp quý khách cần sử dụng thuốc ngay lúc này, em xin phép hướng dẫn quý khách đến Khoa Cấp cứu để được bác sĩ thăm khám và kê toa kịp thời ạ</span>"
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PRACTICE / QUIZ SECTION (MODE 3) -->
+  <div class="container practice-section" id="practiceContent">
+
+    <!-- Câu 1 -->
+    <div class="practice-card">
+      <div class="practice-question">Câu 1: Nêu 9 trường hợp KHÔNG check-in Kios, CSKH phải đăng ký tại quầy LTTN?</div>
+      <textarea class="practice-input" placeholder="Gõ câu trả lời của bạn tại đây..."></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="toggleAnswer(this)">Xem đáp án chuẩn</button>
+      </div>
+      <div class="practice-answer">
+        <b>Đáp án nguyên bản:</b><br>
+        1. KH không cung cấp được GTTT<br>
+        2. KH không mang theo, cung cấp GTTT không hợp lệ<br>
+        3. KH có lịch sử khám BHYT tại CSYT khác hoặc BV/PK Tâm Anh trong vòng từ 05 trở xuống<br>
+        4. KH khám BHYT chưa kết thúc khám Chuyên khoa so với ngày đăng ký khám<br>
+        5. KH khám khu VIP, IVF<br>
+        6. Chọn đích danh BS không đặt hẹn<br>
+        7. KH Thu phí sử dụng tiền mặt (KH khi đăng kí đối tượng Thu phí thanh toán tiền mặt)<br>
+        8. KH muốn chuyển đổi chuyên khoa/PK<br>
+        9. KH có hơn 1 PID tại BV/PK Tâm Anh
+      </div>
+    </div>
+
+    <!-- Câu 2 -->
+    <div class="practice-card">
+      <div class="practice-question">Câu 2: Quy định thứ tự ưu tiên và lưu ý khi mượn giường bệnh khác khoa (Mục 2)?</div>
+      <textarea class="practice-input" placeholder="Gõ câu trả lời của bạn tại đây..."></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="toggleAnswer(this)">Xem đáp án chuẩn</button>
+      </div>
+      <div class="practice-answer">
+        <b>Đáp án nguyên bản:</b><br>
+        <b>1. ƯU TIÊN 1:</b><br>
+        - Khối Nội: Nội tổng hợp, Ung bướu, Nội thần kinh, Nội tiết, Nội thận, Nội tiêu hóa, Trung tâm tim mạch, Trung tâm tim mạch can thiệp<br>
+        - Khối Ngoại: Phẫu thuật thần kinh, TT CTCH, TT Nội soi- Phẫu thuật tiêu hóa, TT Thận học - Tiết niệu- Nam khoa, TT Lồng ngực mạch máu<br>
+        - Khối Sản - Ngoại vú: Sản nội trú, Ngoại vú, Phòng sanh<br>
+        - Khối Nhi - Sơ sinh - Tai mũi họng: Khoa Nhi, TT Sơ sinh, TMH<br>
+        - Khối Hồi sức cấp cứu: Hồi sức tích cực, Cấp cứu<br>
+        <b>2. ƯU TIÊN 2:</b> Cùng tầng cùng tòa; Cùng tòa nhà<br>
+        <b>Lưu ý:</b><br>
+        - Tòa E ưu tiên nhận bệnh Tiết niệu Thận học - Nam khoa, nhận bệnh khi tòa C và tòa F hết giường<br>
+        - Tuân thủ tiêu chuẩn tác phong theo Kịch bản gọi đi; báo cáo quản lý; gửi cú pháp Group Zalo<br>
+        - Truyền loãng xương BHYT (ít nhất 1 ngày): Khu F Tầng 4 (HDU): 1.350.000 vnđ/Ngày
+      </div>
+    </div>
+
+    <!-- Câu 3 -->
+    <div class="practice-card">
+      <div class="practice-question">Câu 3: Kịch bản tư vấn chênh lệch phí giữa khám BHYT và khám dịch vụ khi xảy ra sự cố CNTT?</div>
+      <textarea class="practice-input" placeholder="Gõ câu trả lời của bạn tại đây..."></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="toggleAnswer(this)">Xem đáp án chuẩn</button>
+      </div>
+      <div class="practice-answer">
+        <b>Đáp án nguyên bản:</b><br>
+        "Dạ thưa quý khách, chênh lệch chi phí giữa khám BHYT và dịch vụ tại bệnh viện như sau: chi phí khám buổi sáng thông thường tại bệnh viện là 190.000đ/lượt khám, nếu sử dụng BHYT thì quý khách sẽ được BHYT chi trả 50.600đ, vậy phí khám sau khi cấn trừ là 139.400đ ạ"
+      </div>
+    </div>
+
+    <!-- Câu 4 -->
+    <div class="practice-card">
+      <div class="practice-question">Câu 4: Kịch bản tư vấn khi khách hàng yêu cầu in bảng kê BV01 (Mục 9)?</div>
+      <textarea class="practice-input" placeholder="Gõ câu trả lời của bạn tại đây..."></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="toggleAnswer(this)">Xem đáp án chuẩn</button>
+      </div>
+      <div class="practice-answer">
+        <b>Đáp án nguyên bản:</b><br>
+        "Dạ thưa quý khách, mẫu Bảng kê chi phí khám bệnh BHYT (BV01) là chứng từ bệnh viện sử dụng quyết toán với cơ quan BHYT theo quy định bệnh viện sẽ cung cấp phiếu thanh toán, và hóa đơn. Trong đó, đều thể hiện đầy đủ các khoản chi phí được BHYT chi trả và phần chi phí người bệnh cần thanh toán. Em xin phép hướng dẫn Qúy khách tra cứu thông tin phiếu thanh toán tại hồ sơ SỨC KHỎE ạ"<br>
+        <i>(CSKH hướng dẫn KH quét QR truy cập hồ sơ SỨC KHỎE và xem hướng dẫn đi kèm tại bìa hồ sơ khám bệnh)</i>
+      </div>
+    </div>
+
+    <!-- Câu 5 -->
+    <div class="practice-card">
+      <div class="practice-question">Câu 5: Kịch bản giải thích KH bị đau mắt do bụi thắc mắc tại sao cần đo mắt trước khi vào phòng khám mắt (Mục 7)?</div>
+      <textarea class="practice-input" placeholder="Gõ câu trả lời của bạn tại đây..."></textarea>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="toggleAnswer(this)">Xem đáp án chuẩn</button>
+      </div>
+      <div class="practice-answer">
+        <b>Đáp án nguyên bản:</b><br>
+        "Dạ thưa quý khách, việc đo các thông số mắt ban đầu (như nhãn áp và khúc xạ) là bước sàng lọc cần thiết để giúp Bác sĩ đánh giá mức tổn thương mắt do bụi/chấn thương khác....gây ra,<br><br>
+        Đây là bước kiểm tra nhanh, hoàn toàn không đau, giúp Bác sĩ có đầy đủ dữ liệu thị lực ban đầu để việc thăm khám trực tiếp được chính xác và hiệu quả nhất. Vì vậy em xin phép hướng dẫn quý khách đến phòng đo nhãn áp khúc xạ trước khi vào gặp Bác sĩ ạ."
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MCQ SECTION (MODE 4) -->
+  <div class="container mcq-section" id="mcqContent">
+    <div class="mcq-score-banner" style="padding:10px 14px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center;">
+      <span style="font-size:0.9rem; font-weight:700;">KẾT QUẢ:</span>
+      <span style="font-size:1.15rem; font-weight:800;" id="mcqScoreDisplay">0 / 62 Câu Đúng</span>
+    </div>
+
+    <!-- 62 Questions -->
+    <div id="mcqList"></div>
+  </div>
+
+  <!-- BOTTOM BAR FOR FAST ACTIONS -->
+  <div class="bottom-bar">
+    <div class="counter-info" id="statusInfo">Đang xem: 10 Mục Toàn Văn</div>
+    <button class="btn-action-round" id="btnActionToggleAll" onclick="toggleAllCards()">Thu gọn / Mở hết</button>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    let currentMode = 'study';
+    let allCollapsed = false;
+
+    // DATA 62 CAU TRAC NGHIEM
+    const mcqData = [
+    {
+        "id":  1,
+        "question":  "Trong quá trình tiếp nhận khách hàng, CSKH phát hiện khách có nhiều hơn 01 PID. Việc đầu tiên cần làm là gì?",
+        "options":  [
+                        "A. Tạo PID mới",
+                        "B. Xóa PID cũ",
+                        "C. Xác minh và xử lý theo quy trình nhiều PID",
+                        "D. Bỏ qua nếu khách không yêu cầu"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  2,
+        "question":  "Khi khách hàng có nhiều PID, CSKH ưu tiên sử dụng PID nào?",
+        "options":  [
+                        "A. PID được tạo đầu tiên",
+                        "B. PID có số nhỏ nhất",
+                        "C. PID có lịch sử thăm khám gần nhất",
+                        "D. PID khách tự chọn"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  3,
+        "question":  "Nếu PID có lịch sử khám gần nhất không có lịch sử của chuyên khoa khách cần tái khám, CSKH sẽ:",
+        "options":  [
+                        "A. Chuyển sang PID còn lại",
+                        "B. Vẫn sử dụng PID có lịch sử gần nhất và phối hợp TKYK/HS để bác sĩ tham khảo lịch sử trên PID còn lại",
+                        "C. Tạo PID mới",
+                        "D. Hủy lịch khám"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  4,
+        "question":  "Khách hàng đã hoàn tất khám và thanh toán, quay lại bệnh viện do cần hỏi thêm về toa thuốc sau 18 giờ kể từ khi khám. CSKH xử lý thế nào?",
+        "options":  [
+                        "A. Đăng ký khám mới có thu phí",
+                        "B. Áp dụng đăng ký khám 0 đồng",
+                        "C. Chỉ áp dụng nếu có BHYT",
+                        "D. Yêu cầu khách đặt lịch khám lại"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  5,
+        "question":  "Khách hàng thực hiện cận lâm sàng liên site thuộc trường hợp:",
+        "options":  [
+                        "A. Thu phí khám",
+                        "B. Đăng ký khám 0 đồng",
+                        "C. Không tiếp nhận",
+                        "D. Chỉ áp dụng BHYT"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  6,
+        "question":  "Trong quá trình tiếp nhận tại quầy ngoại trú, mẹ của trẻ sơ sinh cung cấp Giấy chứng sinh và CCCD, đồng ý sử dụng BHYT cho bé nhưng chưa có số BHYT.",
+        "options":  [
+                        "A. Cấp Mã Tạm 4 (MT4)",
+                        "B. Tra cứu mã tạm BHYT trên cổng BHXH",
+                        "C. Thu phí",
+                        "D. Từ chối BHYT"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  7,
+        "question":  "Tổng đài đặt hẹn sai chuyên khoa. Khi khách đến quầy, CSKH cần ưu tiên:",
+        "options":  [
+                        "A. Đăng ký lại từ đầu",
+                        "B. Giải thích theo Q\u0026amp;A và chuyển phòng khám phù hợp",
+                        "C. Cho khách chờ",
+                        "D. Hủy lịch"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  8,
+        "question":  "Khách hàng vừa thanh toán viện phí bằng thẻ tín dụng Sacombank tại quầy lễ tân và muốn đăng ký chương trình trả góp 0%. CSKH/Thu ngân cần hướng dẫn khách thực hiện bước nào trước tiên?",
+        "options":  [
+                        "A. Điền Phiếu đăng ký trả góp",
+                        "B. Liên hệ tổng đài Sacombank",
+                        "C. Chờ sao kê mới đăng ký",
+                        "D. Thanh toán lại giao dịch"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  9,
+        "question":  "Tại Bệnh viện đa khoa Tâm Anh, hiện tại đang áp dụng chương trình trả góp liên kết với những ngân hàng nào?",
+        "options":  [
+                        "A. Techcombank và MB",
+                        "B. Sacombank và MB",
+                        "C. Sacombank và MSB",
+                        "D. Vietcombank và BIDV"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  10,
+        "question":  "Bạn là nhân viên CSKH. Khách hàng đến trả lại tiêu bản và block paraffin sau khi mượn để hội chẩn tại bệnh viện khác. Khách chỉ mang theo tiêu bản và block, không mang theo biên bản giao nhận hoặc phiếu tạm ứng. Bạn cần hướng dẫn khách hàng thực hiện bước nào trước tiên?",
+        "options":  [
+                        "A. Tiếp nhận và cho trả ngay vì khách đã mang đủ tiêu bản",
+                        "B. Hướng dẫn khách bổ sung bản sao biên bản giao nhận hoặc phiếu tạm ứng để thực hiện thủ tục hoàn trả",
+                        "C. Yêu cầu khách quay lại vào ngày khác",
+                        "D. Thu phí trước rồi mới tiếp nhận"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  11,
+        "question":  "Khách hàng đến quầy và đề nghị mượn tiêu bản để mang sang bệnh viện khác điều trị nhưng chưa biết cần thực hiện những thủ tục gì. CSKH nên làm gì đầu tiên?",
+        "options":  [
+                        "A. Hướng dẫn khách đến khoa Giải phẫu bệnh ngay",
+                        "B. Tiếp nhận yêu cầu, kiểm tra thông tin và hướng dẫn khách thực hiện đúng quy trình mượn tiêu bản theo quy định",
+                        "C. Yêu cầu khách tự tìm hiểu quy trình trên website",
+                        "D. Hướng dẫn khách quay lại vào ngày khác"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  12,
+        "question":  "Khách hàng quay lại trả tiêu bản nhưng thiếu 01 block paraffin. CSKH cần xử lý như thế nào?",
+        "options":  [
+                        "A. Tiếp nhận ngay vì khách đã trả gần đủ",
+                        "B. Phối hợp với khoa Giải phẫu bệnh kiểm tra và hướng dẫn khách thực hiện thủ tục theo quy định đối với trường hợp thiếu block",
+                        "C. Yêu cầu khách về tìm lại tiêu bản, có đầy đủ rồi quay lại làm thủ tục theo quy trình",
+                        "D. Yêu cầu khách đóng phí trước"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  13,
+        "question":  "Người bệnh đã hoàn tất thanh toán và muốn vào phòng thực hiện ngay, tuy nhiên kỹ thuật viên đang tiếp nhận một ca khác. CSKH nên xử lý thế nào?",
+        "options":  [
+                        "A. Đưa người bệnh vào phòng ngay",
+                        "B. Giải thích tình trạng chờ, hướng dẫn người bệnh đợi theo thứ tự và cập nhật thời gian dự kiến",
+                        "C. Đề nghị người bệnh tự quay lại sau",
+                        "D. Cho người bệnh ưu tiên nếu yêu cầu"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  14,
+        "question":  "Khách tái khám, không mang giấy tờ tùy thân. Khi check-in, hệ thống hiển thị họ tên giống lịch sử khám nhưng ngày sinh và địa chỉ khách khai khác với dữ liệu trên hệ thống. CSKH nên làm gì?",
+        "options":  [
+                        "A. Giữ nguyên thông tin cũ vì khách là người tái khám",
+                        "B. Sửa ngay thông tin theo lời khách khai",
+                        "C. Tạm dừng cập nhật, thực hiện xác minh danh tính theo quy định trước khi điều chỉnh thông tin hành chính",
+                        "D. Tạo hồ sơ mới để tránh mất thời gian"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  62,
+        "question":  "Trong quá trình khám, Thư ký y khoa phát hiện địa chỉ của khách trên hệ thống không đúng và yêu cầu CSKH sửa ngay để không ảnh hưởng việc thực hiện dịch vụ. CSKH nên làm gì?",
+        "options":  [
+                        "A. Sửa ngay theo thông tin Thư ký y khoa cung cấp",
+                        "B. Chỉ sửa sau khi khách kết thúc khám",
+                        "C. Thực hiện xác minh lại với khách hàng và giấy tờ hợp lệ trước khi cập nhật thông tin trên hệ thống",
+                        "D. Nhờ bác sĩ quyết định"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  16,
+        "question":  "Trước khi hoàn trả thuốc, cần thực hiện thao tác gì?",
+        "options":  [
+                        "A. Kiểm tra có sử dụng dịch vụ bảo lãnh viện phí trực tiếp tại Bệnh viện",
+                        "B. Kiểm tra Điều dưỡng có xác nhận hoàn trả thuốc (nếu khác ngày)",
+                        "C. Kiểm tra thuốc có trả đủ số lượng",
+                        "D. Tất cả các đáp án trên đều đúng"
+                    ],
+        "ans":  "D"
+    },
+    {
+        "id":  17,
+        "question":  "Điều kiện bảo lãnh viện phí hồ sơ khác ngày nào được tiếp nhận tại Bệnh viện?",
+        "options":  [
+                        "A. Hồ sơ chỉ tái khám 01 chuyên khoa tại Bệnh viện",
+                        "B. Hồ sơ tập Vật lí trị liệu",
+                        "C. Hồ sơ khám Cấp cứu",
+                        "D. Hồ sơ được kết thúc khám cùng ngày gửi bảo lãnh viện phí"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  18,
+        "question":  "Hóa đơn sau khi có kết quả bảo lãnh viện phí cần xuất theo thông tin nào?",
+        "options":  [
+                        "A. Xuất toàn bộ theo thông tin Bệnh viện",
+                        "B. Xuất toàn bộ theo thông tin công ty BHTN",
+                        "C. Xuất toàn bộ theo thông tin khách hàng",
+                        "D. Áp dụng xuất hóa đơn theo thông tin công ty với các công ty quy định"
+                    ],
+        "ans":  "D"
+    },
+    {
+        "id":  19,
+        "question":  "Khách hàng được áp dụng bảo lãnh viện phí mấy lần trong ngày?",
+        "options":  [
+                        "A. 01 lần",
+                        "B. 02 lần",
+                        "C. 03 lần",
+                        "D. Tùy thuộc vào chuyên khoa khám của khách hàng"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  20,
+        "question":  "Để kiểm tra hạn mức trên thông tin bảo hiểm tư nhân của khách hàng thực hiện như thế nào?",
+        "options":  [
+                        "A. CSKH liên hệ hotline đơn vị bồi thường bảo lãnh",
+                        "B. CSKH hướng dẫn khách hàng liên hệ hotline đơn vị bồi thường bảo lãnh",
+                        "C. CSKH email đến CSKH của đơn vị bồi thường bảo lãnh",
+                        "D. Tất cả các đáp án trên đều đúng"
+                    ],
+        "ans":  "D"
+    },
+    {
+        "id":  21,
+        "question":  "Khi tiếp nhận bảo lãnh viện phí, cần kiểm tra các chi phí nào của Bệnh viện?",
+        "options":  [
+                        "A. Tổng chi phí phát sinh",
+                        "B. Tổng chi phí khám",
+                        "C. Tổng chi phí KCB \u0026amp; các chi phí được hoàn trả",
+                        "D. Tổng chi phí KCB \u0026amp; các chi phí bị từ chối bảo lãnh viện phí"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  22,
+        "question":  "Quy trình bảo lãnh viện phí ngoại trú có mấy bước?",
+        "options":  [
+                        "A. 7 bước",
+                        "B. 6 bước",
+                        "C. 5 bước",
+                        "D. 4 bước"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  23,
+        "question":  "Quy trình bảo lãnh viện phí nội trú có mấy bước?",
+        "options":  [
+                        "A. 7 bước",
+                        "B. 6 bước",
+                        "C. 5 bước",
+                        "D. 4 bước"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  24,
+        "question":  "BM01.TA2.CSKH.QT.23_Phiếu thông tin khách hàng đăng ký khám chữa bệnh áp dụng khi bảo lãnh viện phí cho loại hình điều trị nào sau đây?",
+        "options":  [
+                        "A. Ngoại trú",
+                        "B. Nội trú",
+                        "C. Cấp cứu",
+                        "D. Tất cả các đáp án trên đều đúng"
+                    ],
+        "ans":  "D"
+    },
+    {
+        "id":  25,
+        "question":  "Vào ngày lễ 02/9/2026 có được áp dụng hình thức bảo lãnh viện phí tại Bệnh viện không?",
+        "options":  [
+                        "A. Không được áp dụng bảo lãnh viện phí",
+                        "B. Vẫn gửi hồ sơ bảo lãnh viện phí theo thường quy",
+                        "C. Gửi được với điều kiện công ty BHTN không nghỉ lễ 02/9",
+                        "D. Được áp dụng bảo lãnh viện phí vào ngày làm việc kế tiếp"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  26,
+        "question":  "Thời gian để công ty bảo hiểm phản hồi xác nhận bảo lãnh viện phí Ngoại trú đến khách hàng trong vòng bao nhiêu phút?",
+        "options":  [
+                        "A. 30-45 phút",
+                        "B. 45-60 phút",
+                        "C. 30-60 phút",
+                        "D. 60 -90 phút"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  27,
+        "question":  "Những bộ phận nào có nhiệm vụ phụ trách khai thác thông tin khách hàng khám chữa bệnh có sử dụng BHTN?",
+        "options":  [
+                        "A. CSKH",
+                        "B. Nhân sự hồ sơ bảo hiểm",
+                        "C. Kế toán xuất hóa đơn",
+                        "D. Nhân viên khu Văn phòng"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  28,
+        "question":  "Đối với khách hàng sử dụng thẻ bảo hiểm có liên kết tại Bệnh viện, hướng dẫn khách hàng làm gì trong quá trình khám chữa bệnh?",
+        "options":  [
+                        "A. Đóng tạm ứng chi phí trong quá trình thăm khám",
+                        "B. Ra về chờ thông báo",
+                        "C. Xuất hóa đơn ngay lập tức",
+                        "D. Ký xác nhận vào Thư xác nhận bảo lãnh viện phí trước"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  29,
+        "question":  "Đối với thẻ bảo hiểm không liên kết trực tiếp tại bệnh viện, hướng dẫn khách hàng làm gì sau khi hoàn tất thăm khám?",
+        "options":  [
+                        "A. Hướng dẫn khách hàng đóng tạm ứng chi phí",
+                        "B. Hướng dẫn khách hàng tự thanh toán và thực hiện gửi bồi thường sau",
+                        "C. Hướng dẫn khách hàng chờ công ty bảo hiểm xác nhận trong 60 phút",
+                        "D. Hướng dẫn khách hàng ký vào biên bản tường trình tai nạn"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  30,
+        "question":  "Bộ phận nào chịu trách nhiệm tiếp nhận hồ sơ khách hàng khi có nhu cầu sử dụng bảo lãnh viện phí?",
+        "options":  [
+                        "A. Kế toán viện phí",
+                        "B. Kế toán xuất hóa đơn",
+                        "C. CSKH",
+                        "D. Khách hàng"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  31,
+        "question":  "Tiếp nhận các hồ sơ của khách hàng khi bảo lãnh viện phí trực tiếp?",
+        "options":  [
+                        "A. Thẻ bảo hiểm, Giấy tờ tùy thân",
+                        "B. Sổ hộ khẩu và Hóa đơn điện tử",
+                        "C. Phiếu thanh toán tạm ứng",
+                        "D. Hồ sơ bệnh án bản cứng"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  32,
+        "question":  "Có thể bán toa thuốc cũ với các điều kiện nào sau đây?",
+        "options":  [
+                        "A. Dược sĩ liên hệ Chuyên môn xác nhận",
+                        "B. Bác sĩ xác nhận",
+                        "C. Tổng đài xác nhận với Chuyên môn chuyển tin đến CSKH",
+                        "D. Tất cả các đáp án trên đều đúng"
+                    ],
+        "ans":  "D"
+    },
+    {
+        "id":  33,
+        "question":  "Khi phát hiện sai thông tin hành chính như: dấu trên tên của KH khi chốt BHYT, CSKH có áp dụng BHYT được không?",
+        "options":  [
+                        "A. Không áp dụng được, hướng dẫn KH điều chỉnh lại thông tin",
+                        "B. Áp dụng được, hướng dẫn KH điều chỉnh lại thông tin",
+                        "C. Chỉ áp dụng lần đầu KCB, hướng dẫn KH điều chỉnh lại thông tin vào lần KCB tiếp theo",
+                        "D. Áp dụng được 02 lần KCB, hướng dẫn KH điều chỉnh lại thông tin vào lần KCB tiếp theo"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  34,
+        "question":  "Đơn thuốc nào khách hàng cần xuống Nhà thuốc thanh toán?",
+        "options":  [
+                        "A. Đơn thuốc hướng thần, gây nghiện",
+                        "B. Đơn thuốc có Sản phẩm hỗ trợ điều trị",
+                        "C. Đơn thuốc không có chữ kí số của Bác sĩ",
+                        "D. Đơn thuốc có lời dặn mua thuốc không kê trực tiếp trên đơn"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  35,
+        "question":  "Khi phát hiện sai thông tin hành chính như: ngày tháng sinh của KH khác với CCCD khi chốt BHYT, CSKH có áp dụng BHYT được không?",
+        "options":  [
+                        "A. Không áp dụng được, hướng dẫn KH điều chỉnh lại thông tin",
+                        "B. Áp dụng được, hướng dẫn KH điều chỉnh lại thông tin",
+                        "C. Chỉ áp dụng lần đầu KCB, hướng dẫn KH điều chỉnh lại thông tin vào lần KCB tiếp theo",
+                        "D. Áp dụng được 02 lần KCB, hướng dẫn KH điều chỉnh lại thông tin vào lần KCB tiếp theo"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  36,
+        "question":  "Khách hàng báo bị đau bụng vùng hố chậu phải kèm sốt nhẹ, khám chuyên khoa nào?",
+        "options":  [
+                        "A. Chuyên khoa Ngoại tiêu hóa",
+                        "B. Chuyên khoa Nội tiêu hóa",
+                        "C. Chuyên khoa Sản phụ khoa",
+                        "D. Chuyên khoa Tiết niệu"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  37,
+        "question":  "Khi thấy một Khách hàng có biểu hiện co giật, trợn mắt tại sảnh chờ, hành động đúng nhất là:",
+        "options":  [
+                        "A. Ghi lại thông tin Khách hàng và báo cáo trưởng nhóm",
+                        "B. Đợi Khách hàng hết co giật rồi trao đổi",
+                        "C. Yêu cầu người nhà giữ chặt tay chân Khách hàng",
+                        "D. Gọi Bác sĩ, Điều dưỡng hỗ trợ tại chỗ ngay lập tức"
+                    ],
+        "ans":  "D"
+    },
+    {
+        "id":  38,
+        "question":  "Chức năng \"Chuyển phòng\" trên thanh công cụ của phần mềm TAHIS KCB chỉ được phép sử dụng trong trường hợp nào?",
+        "options":  [
+                        "A. Chuyển khách hàng sang phòng khám khác chuyên khoa",
+                        "B. Chuyển phòng khám cùng chuyên khoa",
+                        "C. Khách hàng yêu cầu hủy khám để đi về",
+                        "D. Chuyển bệnh nhân từ ngoại trú vào nội trú"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  39,
+        "question":  "Khi cần in lại hóa đơn của giao dịch thẻ gần nhất vừa thực hiện trên máy POS, thu ngân bấm tổ hợp phím nào?",
+        "options":  [
+                        "A. Bấm nút ENTER hai lần",
+                        "B. Tổ hợp phím: Func ➔ 72 ➔ Enter",
+                        "C. Tổ hợp phím: Func ➔ 73 ➔ Enter",
+                        "D. Bấm giữ nút CANCEL"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  40,
+        "question":  "Yêu cầu bắt buộc phải có trên chỉ định cận lâm sàng khi khách hàng muốn hoàn/hủy tiền dịch vụ là gì?",
+        "options":  [
+                        "A. Chữ ký của điều dưỡng đánh giá ban đầu",
+                        "B. Xác nhận và chữ ký của Bác sĩ trên chỉ định/Biên lai/Phiếu từ chối lời khuyên y khoa",
+                        "C. Dấu mộc của phòng kế hoạch tổng hợp",
+                        "D. Khách hàng tự ký tên là đủ điều kiện"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  41,
+        "question":  "Trường hợp khách hàng đến tái khám thực tế khác với Bác sĩ ban đầu đã cho chỉ định cận lâm sàng tương lai, nhân viên CSKH cần thực hiện thao tác lưu ý nào?",
+        "options":  [
+                        "A. Hủy toàn bộ chỉ định tương lai cũ đi",
+                        "B. Giữ nguyên tên bác sĩ cũ, không được thay đổi",
+                        "C. Nhập lại tên Bác sĩ thực tế thăm khám và đọc kết quả của ngày hôm nay",
+                        "D. Yêu cầu khách hàng quay lại tái khám ngày khác tìm đúng bác sĩ ban đầu"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  42,
+        "question":  "Khi thực hiện đăng ký \"Chỉ định lẻ\" qua phòng \"Chỉ định theo yêu cầu\", tại sao nhân viên CSKH bắt buộc phải tư vấn kỹ và không được chọn đối tượng BHYT cho khách hàng?",
+        "options":  [
+                        "A. Vì phòng khám này do Ban Giám Đốc trực tiếp quản lý",
+                        "B. Vì khách hàng đăng ký chỉ định lẻ không qua bác sĩ chuyên khoa khám, tư vấn, do đó không đủ điều kiện để áp dụng BHYT",
+                        "C. Vì phần mềm TAHIS sẽ tự động khóa thẻ BHYT nếu chọn sai phòng",
+                        "D. Vì các dịch vụ này chỉ được thực hiện vào ngày thứ Bảy và Chủ nhật"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  43,
+        "question":  "Khách hàng NGUYỄN VĂN ANH có danh sách chỉ định Cận lâm sàng tương lai của nhiều chuyên khoa khác nhau trong vòng 30 ngày. Thao tác chuẩn để kéo chỉ định lên phần mềm TAHIS KCB mà không bị nhầm lẫn là gì?",
+        "options":  [
+                        "A. Bấm nút \"Chọn trọn gói\" để hệ thống tự động kéo tất cả dịch vụ của các chuyên khoa cùng lúc",
+                        "B. Thực hiện thao tác kéo cận lâm sàng tương lai lần lượt cho TỪNG CHUYÊN KHOA MỘT để chắc chắn không nhầm lẫn chỉ định vào chuyên khoa khác",
+                        "C. Yêu cầu khách hàng quay lại các phòng khám chuyên khoa ban đầu để bác sĩ tư vấn và in lại từng tờ chỉ định mới",
+                        "D. Chuyển đối tượng toàn bộ sang \"Thu phí\" rồi nhập tay lại từ đầu"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  44,
+        "question":  "Khi in chỉ định cận lâm sàng có chi tiết dịch vụ từ hệ thống quản lý gói khám, làm thế nào để nhân viên CSKH phân biệt nhanh giữa \"chỉ định trong gói KSK\" và \"chỉ định lẻ phát sinh ngoài gói\"?",
+        "options":  [
+                        "A. Các chỉ định phát sinh ngoài gói sẽ hiển thị chữ màu đỏ",
+                        "B. Các chỉ định phát sinh ngoài gói sẽ được hệ thống TÔ ĐẬM (In đậm) trên phiếu in",
+                        "C. Các chỉ định trong gói sẽ có dấu tích chữ V ở cột \"Đã thực hiện\"",
+                        "D. Dựa vào đơn giá hiển thị bằng 0 đồng của gói khám"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  45,
+        "question":  "Đối với khách hàng có chỉ định CLS tương lai thuộc đối tượng \"BHYT\" nhưng đến ngày thực hiện thì thẻ BHYT đã hết hạn sử dụng, quy trình xử lý đổi đối tượng chỉ định trên phần mềm được thực hiện như thế nào?",
+        "options":  [
+                        "A. Xóa toàn bộ chỉ định cũ và yêu cầu khách hàng đi khám lại để bác sĩ cho chỉ định mới",
+                        "B. Chuyển các dịch vụ cận lâm sàng đó sang đối tượng \"Thu phí\" bằng cách sử dụng chức năng \"đổi đối tượng chỉ định\" trực tiếp trên phần mềm TAHIS KCB",
+                        "C. Giữ nguyên đối tượng BHYT và ghi chú \"Thẻ hết hạn\" vào ô lý do",
+                        "D. Chuyển bệnh nhân sang đối tượng \"Trả sau\" để chờ gia hạn thẻ"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  46,
+        "question":  "Tình huống: Khách hàng NGUYỄN HỮU TÀI chuyển khoản qua QRcode động tại màn hình tablet thành công nhưng số tham chiếu không tự động điền vào phần mềm TAHIS Viện phí. Thao tác xử lý nhanh tại quầy thông qua biểu tượng ô vuông đằng sau cột chuẩn chi là gì?",
+        "options":  [
+                        "A. Nhập tay số biên lai vào ô trống",
+                        "B. Click vào biểu tượng ô vuông đằng sau cột chuẩn chi để xuất ra một bảng thể hiện toàn bộ các giao dịch chuyển khoản của khách hàng trong ngày để chọn",
+                        "C. Bấm nút \"Hủy\" giao dịch và yêu cầu khách hàng trả tiền mặt, sau đó tự liên hệ đến ngân hàng để đối soát giao dịch chuyển khoản",
+                        "D. Chuyển bill thanh toán sang tab \"Thu tạm ứng\""
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  47,
+        "question":  "Khi quét mã QRcode trên CCCD của khách hàng mới, phần mềm TAHIS KCB sẽ KHÔNG tự động tải lên trường thông tin nào?",
+        "options":  [
+                        "A. Họ và tên",
+                        "B. Ngày tháng năm sinh",
+                        "C. Địa chỉ thường trú",
+                        "D. Số điện thoại di động"
+                    ],
+        "ans":  "D"
+    },
+    {
+        "id":  48,
+        "question":  "Cú pháp tin nhắn gửi lên nhóm Zalo \"TAH-HOÀN BIÊN LAI-CHỈ ĐỊNH\" khi hoàn bill để kéo lại (KL) dịch vụ khác cho khách hàng là gì?",
+        "options":  [
+                        "A. MSNV- Họ và tên nhân viên-Bill/CĐ-TM/CK",
+                        "B. MSNV- Họ và tên nhân viên-Bill/CĐ (KL)-TM/CK",
+                        "C. Hoàn tiền bill - Mã bệnh nhân - Tiền mặt",
+                        "D. MSNV_Họ tên_Hủy biên lai kéo lại"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  49,
+        "question":  "Biên độ ngày cho phép để nhân viên CSKH có thể nhận diện và kéo các chỉ định \"Cận lâm sàng tương lai\" của người bệnh lên hệ thống là bao nhiêu ngày (trừ chuyên khoa Sản phụ khoa và chuyên khoa hỗ trợ sinh sản)?",
+        "options":  [
+                        "A. Trong vòng 20 ngày",
+                        "B. Trong vòng 30 ngày",
+                        "C. Sớm 3 ngày, trễ tối đa 30 ngày",
+                        "D. Trễ tối đa 60 ngày"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  50,
+        "question":  "Khi thẻ ngân hàng của khách hàng có biểu tượng chip điện tử, vị trí chính xác để đưa thẻ vào thanh toán trên máy POS là ở đâu?",
+        "options":  [
+                        "A. Rãnh trượt dọc bên hông máy POS",
+                        "B. Khe cắm dưới đáy máy POS",
+                        "C. Áp mặt chip vào màn hình máy POS",
+                        "D. Không cần đưa vào máy, chỉ cần chụp ảnh thẻ"
+                    ],
+        "ans":  "B"
+    },
+    {
+        "id":  51,
+        "question":  "Theo quy định áp dụng chính sách giảm giá cho khách hàng khám từ chuyên khoa thứ 2 trở đi tại khu vực VIP, nhân viên Chăm sóc khách hàng thực hiện xử lý trên phân hệ HIS Viện phí như thế nào?",
+        "options":  [
+                        "A. Duyệt giảm 50% chuyên khoa 2 trở đi, ghi chú CK234",
+                        "B. Duyệt giảm 50% chuyên khoa 2 trở đi, ghi chú CK234",
+                        "C. Duyệt giảm 50% chuyên khoa 3 trở đi, ghi chú CK234",
+                        "D. Duyệt giảm 50% chuyên khoa 4 trở đi, ghi chú CK234"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  52,
+        "question":  "KH nhập viện trực tiếp cần mang giấy tờ gì?",
+        "options":  [
+                        "A. Hồ sơ khám bệnh+ phiếu hẹn nhập viện + CCCD + BHYT/BHTN (nếu có)",
+                        "B. Hồ sơ khám bệnh+ phiếu hẹn nhập viện + CCCD + BHTN (nếu có)",
+                        "C. Hồ sơ khám bệnh+ CCCD + BHTN",
+                        "D. Hồ sơ khám bệnh+ phiếu hẹn nhập viện + CCCD + BHTN/thẻ ngân hàng (nếu có)"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  53,
+        "question":  "Để in bảng ước tính viện phí thì CSKH sử dụng công cụ nào?",
+        "options":  [
+                        "A. Vào phần mềm HIS đăng ký nhập PID in ước tính viện phí",
+                        "B. Tự đánh máy lên bảng excel mẫu ước tính viện rồi in ra",
+                        "C. Vào phần mềm “Tool booking” nhập PID in ước tính viện phí",
+                        "D. Vào phần mềm “Tool ding dưỡng” nhập PID in ước tính viện phí"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  54,
+        "question":  "Khi tư vấn nhập viện trực tiếp CSKH sẽ dựa vào đâu để tư vấn cho KH đầy đủ nhất?",
+        "options":  [
+                        "A. CSKH tư vấn dựa trên phiếu hẹn nhập viện",
+                        "B. CSKH tư vấn dựa trên phiếu khám bệnh của BS",
+                        "C. CSKH tư vấn dựa trên thông tin của KH cung cấp",
+                        "D. CSKH tư vấn dựa trên phiếu cam kết nhập viện"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  55,
+        "question":  "CSKH đặt giường cho KH nhập viện qua:",
+        "options":  [
+                        "A. https://booking.tahospital.vn",
+                        "B. https://booking.tahospital.com",
+                        "C. https://dinhduong.tahospital.vn",
+                        "D. https://dinhduong.tahospital.com"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  56,
+        "question":  "Khách hàng nhập viện không mang đủ tiền để đóng thì phải làm sao?",
+        "options":  [
+                        "A. CSKH yêu cầu khách từ chối nhập viện do không đủ tiền đóng",
+                        "B. CSKH báo khách hàng quay lại gặp bác sĩ khám ban đầu",
+                        "C. CSKH thu tạm ứng số tiền tối thiểu 1 ngày tiền giường và tư vấn thời gian đóng đủ, ký giấy cam kết thanh toán dịch vụ",
+                        "D. CSKH báo KH quay về nhà lấy tiền thêm đóng đủ mới cho nhập viện"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  57,
+        "question":  "Trường hợp phiếu hẹn nhập không tổng chi phí để KH đóng tạm ứng thì CSKH xử lý như thế nào?",
+        "options":  [
+                        "A. CSKH làm nhập viện bình thường không thu tiền tạm ứng",
+                        "B. CSKH cho ghi cam kết thanh toán rồi cho lên khoa không thu tiền tạm ứng",
+                        "C. CSKH không cho nhập viện vì biết số thu tiền tạm ứng",
+                        "D. CSKH chủ động liên hệ BS cho chỉ định, khoa nhập viện để lấy thông tin chi phí để tạm ứng cho KH"
+                    ],
+        "ans":  "D"
+    },
+    {
+        "id":  58,
+        "question":  "Trường hợp khách hàng đến nhập viện trực tiếp sau khi làm xong thủ tục nhập viện, khi qua đánh giá ban đầu KH bị huyết áp cao phải chuyển qua cấp cứu cần mở tên vào phòng lưu CSKH xử lý như thế nào?",
+        "options":  [
+                        "A. CSKH không xử lý gì -\u0026gt; Điều dưỡng đưa qua cấp cứu -\u0026gt; BS thao tác trên phần mềm nội trú",
+                        "B. CSKH tự hủy nhập viện -\u0026gt; đăng ký phòng lưu -\u0026gt; Điều dưỡng đưa qua cấp cứu -\u0026gt; BS thao tác trên phần mềm cấp cứu",
+                        "C. CSKH báo kế toán hoàn bill, báo IT hủy nhập viện -\u0026gt; đăng ký phòng lưu -\u0026gt; Điều dưỡng đưa qua cấp cứu -\u0026gt; BS thao tác trên phần mềm cấp cứu",
+                        "D. CSKH báo kế toán hoàn bill, báo IT hủy nhập viện -\u0026gt; đăng ký phòng lưu -\u0026gt; Điều dưỡng đưa qua cấp cứu -\u0026gt; BS thao tác trên phần mềm nội trú"
+                    ],
+        "ans":  "C"
+    },
+    {
+        "id":  59,
+        "question":  "Khách hàng nhập viện trực tiếp có BHTN liên kết tại bệnh viện thì CSKH sẽ tiếp nhận như thế nào?",
+        "options":  [
+                        "A. Scan thẻ BHTN + CCCD + Hồ sơ nhập viện -\u0026gt; gửi lên TA Scan + Tạo hồ sơ trên tool BHTN",
+                        "B. Chụp hình thẻ BHTN + CCCD + Hồ sơ nhập viện -\u0026gt; gửi lên nhóm zalo BHTN nội trú",
+                        "C. Chỉ cần gọi điện thông báo BHTN nắm thông tin",
+                        "D. Chụp hình thẻ BHTN + CCCD + Hồ sơ nhập viện -\u0026gt; gửi lên cấp cứu và KTVP"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  60,
+        "question":  "Khách hàng có lưu trữ tế bào gốc khi làm hồ sơ nhập viện thì xử lý như thế nào?",
+        "options":  [
+                        "A. CSKH tiếp nhận thông tin bàn giao điều dưỡng cấp cứu/ đánh giá ban đầu và gọi điện báo điều dưỡng khoa sản và đơn vị tế bào gốc",
+                        "B. CSKH tiếp nhận thông tin bàn giao gọi điện báo điều dưỡng khoa sản và đơn vị tế bào gốc",
+                        "C. CSKH tiếp nhận thông tin bàn giao điều dưỡng cấp cứu/đánh giá ban đầu",
+                        "D. CSKH tiếp nhận thông tin bàn giao đơn vị tế bào gốc"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  61,
+        "question":  "Khách hàng có gói sanh khi làm hồ sơ nhập viện trực tiếp thì xử lý như thế nào?",
+        "options":  [
+                        "A. CSKH làm thủ tục nhập viện chọn đối tượng “gói khám” đăng ký không áp dụng BHYT",
+                        "B. CSKH làm thủ tục nhập viện chọn đối tượng “gói khám” đăng ký có áp dụng BHYT",
+                        "C. CSKH làm thủ tục nhập viện chọn đối tượng “gói sinh” đăng ký không áp dụng BHYT",
+                        "D. CSKH làm thủ tục nhập viện chọn đối tượng “gói sinh” đăng ký có áp dụng BHYT"
+                    ],
+        "ans":  "A"
+    },
+    {
+        "id":  62,
+        "question":  "Khách hàng truyền thuốc daycare, CSKH thực hiện mở hồ sơ như thế nào?",
+        "options":  [
+                        "A. HIS đăng ký -\u0026gt; Mục 5 Ngoại trú -\u0026gt; đăng ký đối tượng thu phí",
+                        "B. HIS đăng ký -\u0026gt; Mục 4 Ngoại trú -\u0026gt; đăng ký đối tượng thu phí",
+                        "C. HIS đăng ký -\u0026gt; Mục 3 Ngoại trú -\u0026gt; đăng ký đối tượng thu phí",
+                        "D. HIS đăng ký -\u0026gt; Mục 1 Ngoại trú -\u0026gt; đăng ký đối tượng thu phí"
+                    ],
+        "ans":  "A"
+    }
+];
+
+    let userAnswers = {};
+
+    function renderMCQ() {
+      const listContainer = document.getElementById('mcqList');
+      listContainer.innerHTML = '';
+
+      mcqData.forEach((q, index) => {
+        const card = document.createElement('div');
+        card.className = 'mcq-card';
+        card.id = `mcq-card-${q.id}`;
+
+        const charLetters = ['A', 'B', 'C', 'D'];
+
+        let optionsHtml = '';
+        q.options.forEach((opt, oIdx) => {
+          const char = charLetters[oIdx];
+          optionsHtml += `
+            <div class="mcq-option" onclick="selectMCQOption(${q.id}, '${char}', this)">
+              <span class="mcq-opt-char">${char}.</span>
+              <span>${opt.substring(3).trim()}</span>
+            </div>
+          `;
+        });
+
+        card.innerHTML = `
+          <div class="mcq-header-row">
+            <span class="mcq-qnum">CÂU ${q.id} / 62</span>
+          </div>
+          <div class="mcq-question-text">${q.question}</div>
+          <div class="mcq-options">${optionsHtml}</div>
+          <div class="mcq-feedback" id="feedback-${q.id}"></div>
+        `;
+
+        listContainer.appendChild(card);
+      });
+    }
+
+    function selectMCQOption(qid, chosenChar, optEl) {
+      const q = mcqData.find(item => item.id === qid);
+      if (!q) return;
+
+      const card = document.getElementById(`mcq-card-${qid}`);
+      const options = card.querySelectorAll('.mcq-option');
+      const feedback = document.getElementById(`feedback-${qid}`);
+
+      // Reset
+      options.forEach(o => {
+        o.classList.remove('correct', 'wrong');
+        o.style.pointerEvents = 'none'; // Lock after choose
+      });
+
+      userAnswers[qid] = chosenChar;
+
+      const charLetters = ['A', 'B', 'C', 'D'];
+      const correctIdx = charLetters.indexOf(q.ans);
+      const chosenIdx = charLetters.indexOf(chosenChar);
+
+      // Highlight correct answer
+      options[correctIdx].classList.add('correct');
+
+      feedback.style.display = 'block';
+      if (chosenChar === q.ans) {
+        optEl.classList.add('correct');
+        feedback.style.background = '#e6f7ec';
+        feedback.style.color = '#1b5e20';
+        feedback.innerHTML = `✅ <b>Chính xác!</b> Đáp án chuẩn là <b>${q.ans}</b>.`;
+      } else {
+        optEl.classList.add('wrong');
+        feedback.style.background = '#fdf2f2';
+        feedback.style.color = '#c0392b';
+        feedback.innerHTML = `❌ <b>Chưa đúng!</b> Bạn chọn <b>${chosenChar}</b>. Đáp án chuẩn phải là <b>${q.ans}</b>.`;
+      }
+
+      // Update total score
+      updateScore();
+    }
+
+    function updateScore() {
+      let correctCount = 0;
+      mcqData.forEach(q => {
+        if (userAnswers[q.id] === q.ans) {
+          correctCount++;
+        }
+      });
+      document.getElementById('mcqScoreDisplay').innerText = `${correctCount} / 62 Câu Đúng`;
+    }
+
+    // Call on load
+    renderMCQ();
+
+    function switchMode(mode) {
+      currentMode = mode;
+      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+      
+      const studyContent = document.getElementById('studyContent');
+      const practiceContent = document.getElementById('practiceContent');
+      const mcqContent = document.getElementById('mcqContent');
+      const filterBar = document.getElementById('filterBar');
+      const statusInfo = document.getElementById('statusInfo');
+      const bottomBar = document.querySelector('.bottom-bar');
+
+      studyContent.style.display = 'none';
+      practiceContent.style.display = 'none';
+      mcqContent.style.display = 'none';
+      filterBar.style.display = 'none';
+
+      if (mode === 'study') {
+        document.getElementById('btnModeStudy').classList.add('active');
+        document.body.className = 'mode-study';
+        studyContent.style.display = 'block';
+        filterBar.style.display = 'flex';
+        statusInfo.innerText = '10 Mục Toàn Văn';
+        bottomBar.style.display = 'flex';
+      } else if (mode === 'mask') {
+        document.getElementById('btnModeMask').classList.add('active');
+        document.body.className = 'mode-mask';
+        studyContent.style.display = 'block';
+        filterBar.style.display = 'flex';
+        statusInfo.innerText = 'Chạm để mở ô mờ';
+        bottomBar.style.display = 'flex';
+      } else if (mode === 'practice') {
+        document.getElementById('btnModeQuiz').classList.add('active');
+        practiceContent.style.display = 'block';
+        statusInfo.innerText = 'Luyện Tự Luận';
+        bottomBar.style.display = 'flex';
+      } else if (mode === 'mcq') {
+        document.getElementById('btnModeMCQ').classList.add('active');
+        mcqContent.style.display = 'block';
+        bottomBar.style.display = 'none'; // Hide collapse button in MCQ
+      }
+    }
+
+    // Toggle single card collapse
+    function toggleCard(headerEl) {
+      const card = headerEl.closest('.topic-card');
+      card.classList.toggle('collapsed');
+    }
+
+    // Toggle all cards
+    function toggleAllCards() {
+      const cards = document.querySelectorAll('.topic-card');
+      allCollapsed = !allCollapsed;
+      cards.forEach(c => {
+        if (allCollapsed) c.classList.add('collapsed');
+        else c.classList.remove('collapsed');
+      });
+      document.getElementById('btnActionToggleAll').innerText = allCollapsed ? 'Mở hết tất cả' : 'Thu gọn tất cả';
+    }
+
+    // Filter topic chips
+    function filterTopic(topicId) {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const cards = document.querySelectorAll('.topic-card');
+      if (topicId === 'all') {
+        cards.forEach(c => c.style.display = 'block');
+      } else {
+        cards.forEach(c => {
+          if (c.id === 'card-' + topicId) {
+            c.style.display = 'block';
+            c.classList.remove('collapsed');
+          } else {
+            c.style.display = 'none';
+          }
+        });
+      }
+    }
+
+    // Blank click reveal
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('blank')) {
+        e.target.classList.toggle('revealed');
+      }
+    });
+
+    // Toggle answer in Practice Mode
+    function toggleAnswer(btn) {
+      const ansDiv = btn.parentElement.nextElementSibling;
+      if (ansDiv.style.display === 'block') {
+        ansDiv.style.display = 'none';
+        btn.innerText = 'Xem đáp án chuẩn';
+        btn.classList.remove('btn-outline');
+        btn.classList.add('btn-primary');
+      } else {
+        ansDiv.style.display = 'block';
+        btn.innerText = 'Ẩn đáp án';
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline');
+      }
+    }
+
+    // Password Unlock logic: Phap@2911
+    function checkUnlock() {
+      const input = document.getElementById('passInput').value;
+      const err = document.getElementById('lockErr');
+      if (input === 'Phap@2911') {
+        sessionStorage.setItem('is_unlocked', '1');
+        document.getElementById('lockScreen').style.display = 'none';
+      } else {
+        err.style.display = 'block';
+        document.getElementById('passInput').value = '';
+      }
+    }
+
+    // Enter key triggers unlock
+    document.getElementById('passInput').addEventListener('keyup', function(e) {
+      if (e.key === 'Enter') {
+        checkUnlock();
+      }
+    });
+
+    // Check if previously unlocked in session
+    if (sessionStorage.getItem('is_unlocked') === '1') {
+      document.getElementById('lockScreen').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
